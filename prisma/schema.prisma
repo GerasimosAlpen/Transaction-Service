@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client"
+  provider = "prisma-client-js"
   output   = "../generated/prisma"
 }
 
@@ -10,8 +10,8 @@ datasource db {
 model Cart {
   id         Int        @id @default(autoincrement())
   user_id    Int
-  cart_items CartItem[]
 
+  cart_items CartItem[]
   @@map("carts")
 }
 
@@ -22,7 +22,6 @@ model CartItem {
   quantity   Int
 
   cart Cart @relation(fields: [cart_id], references: [id])
-
   @@map("cart_items")
 }
 
@@ -30,8 +29,8 @@ model Order {
   id            Int           @id @default(autoincrement())
   user_id       Int
   created_at    DateTime      @default(now())
-  order_details OrderDetail[]
 
+  order_details OrderDetail[]
   @@map("orders")
 }
 
