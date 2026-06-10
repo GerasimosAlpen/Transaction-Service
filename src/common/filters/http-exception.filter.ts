@@ -14,13 +14,12 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const status = exception.getStatus();
     const exceptionResponse = exception.getResponse();
 
-    let message: unknown;
+    let message: any;
     let error: string | undefined;
 
     if (typeof exceptionResponse === 'object' && exceptionResponse !== null) {
-      const resObj = exceptionResponse as Record<string, unknown>;
-      message = resObj.message || exceptionResponse;
-      error = typeof resObj.error === 'string' ? resObj.error : undefined;
+      message = (exceptionResponse as any).message || exceptionResponse;
+      error = (exceptionResponse as any).error;
     } else {
       message = exceptionResponse;
     }

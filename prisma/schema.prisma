@@ -1,33 +1,36 @@
 generator client {
   provider = "prisma-client-js"
+  output   = "../generated/prisma"
 }
 
 datasource db {
   provider = "mysql"
-  url      = env("DATABASE_URL")
+}
+
+model Cart {
+  id         Int        @id @default(autoincrement())
+  user_id    Int
+
+  cart_items CartItem[]
+  @@map("carts")
 }
 
 model CartItem {
-  id        Int      @id @default(autoincrement())
-  userId    Int      @map("user_id")
-  productId Int      @map("product_id")
-  quantity  Int
-  createdAt DateTime @default(now()) @map("created_at") @db.DateTime(0)
-  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.DateTime(0)
+  id         Int  @id @default(autoincrement())
+  cart_id    Int
+  product_id Int
+  quantity   Int
 
-  @@unique([userId, productId], name: "user_product_unique")
+  cart Cart @relation(fields: [cart_id], references: [id])
   @@map("cart_items")
 }
 
 model Order {
-  id          Int         @id @default(autoincrement())
-  userId      Int         @map("user_id")
-  totalAmount Float       @map("total_amount") @db.Double
-  status      String      @default("PENDING") @db.VarChar(50)
-  createdAt   DateTime    @default(now()) @map("created_at") @db.DateTime(0)
-  updatedAt   DateTime    @default(now()) @updatedAt @map("updated_at") @db.DateTime(0)
-  items       OrderItem[]
+  id            Int           @id @default(autoincrement())
+  user_id       Int
+  created_at    DateTime      @default(now())
 
+  order_details OrderDetail[]
   @@map("orders")
 }
 

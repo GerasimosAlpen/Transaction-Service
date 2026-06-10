@@ -13,7 +13,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   validate(payload: { id: number; role: string }) {
-    // Return claims payload to bind to request.user
     return { id: payload.id, role: payload.role };
   }
 }
