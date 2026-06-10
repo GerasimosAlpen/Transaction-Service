@@ -7,10 +7,10 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
     try {
       await this.$connect();
       console.log('Successfully connected to the database.');
-    } catch (error) {
+    } catch {
       console.error(
         'Warning: Could not connect to the database at localhost:3306. ' +
-        'Please make sure your database server is running. Server boot will continue.',
+          'Please make sure your database server is running. Server boot will continue.',
       );
     }
   }
