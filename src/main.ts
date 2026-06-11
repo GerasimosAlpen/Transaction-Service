@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ValidationPipe } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { TransformInterceptor } from './common/interceptors/transform.interceptor';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
@@ -30,7 +30,6 @@ async function bootstrap() {
     credentials: true,
   });
 
-  // Configure Swagger Documentation
   const config = new DocumentBuilder()
     .setTitle('Transaction Service')
     .setDescription('API documentation for the Transaction Service')
@@ -42,6 +41,10 @@ async function bootstrap() {
 
   const port = process.env.PORT || 3003;
   await app.listen(port);
-  console.log(`Transaction Service is running on: http://localhost:${port}`);
+  Logger.log(`Server is running at http://localhost:${port}`, 'Bootstrap');
+  Logger.log(
+    `Swagger documentation is available at http://localhost:${port}/api/docs`,
+    'Bootstrap',
+  );
 }
 void bootstrap();
