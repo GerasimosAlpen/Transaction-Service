@@ -76,7 +76,6 @@ export class OrdersService {
   }
 
   async checkout(userId: number, authHeader?: string) {
-    // 1. Retrieve the cart for the user
     const cart = await this.prisma.cart.findFirst({
       where: { user_id: userId },
       include: { cart_items: true },
@@ -92,7 +91,6 @@ export class OrdersService {
       price: number;
     }[] = [];
 
-    // 2. Verify inventory
     for (let i = 0; i < cart.cart_items.length; i++) {
       const item = cart.cart_items[i];
       const product = await this.fetchProductDetails(item.product_id);
@@ -116,13 +114,11 @@ export class OrdersService {
       });
     }
 
-    // 3. Decrement inventory in product-service FIRST
     for (let i = 0; i < validatedItems.length; i++) {
       const item = validatedItems[i];
       await this.reduceProductStock(item.productId, item.quantity, authHeader);
     }
 
-    // 4. Create Order and OrderDetails, then clear cart in a transaction
     const order = await this.prisma.$transaction(async (prisma) => {
       const newOrder = await prisma.order.create({
         data: {
@@ -166,11 +162,6 @@ export class OrdersService {
       throw new ForbiddenException('You are not authorized to view this order');
     }
 
-    // Since the new schema has no status field, we don't update it.
-    // If you need status updates, you must add it back to the schema.prisma
-    // and run `npx prisma db push` or `migrate dev`
-
-    // Hydrate product details for the items
     const hydratedItems = await Promise.all(
       order.order_details.map(async (item) => {
         const product = await this.fetchProductDetails(item.product_id);

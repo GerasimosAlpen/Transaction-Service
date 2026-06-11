@@ -69,7 +69,6 @@ export class CartService {
   }
 
   async addToCart(userId: number, productId: number, quantity: number) {
-    // 1. Verify product existence and stock in Product Service
     const product = await this.fetchProductDetails(productId);
     if (!product) {
       throw new NotFoundException('Product not found');
@@ -81,7 +80,6 @@ export class CartService {
       );
     }
 
-    // 2. Find or create cart
     let cart = await this.prisma.cart.findFirst({
       where: { user_id: userId },
     });
@@ -92,7 +90,6 @@ export class CartService {
       });
     }
 
-    // 3. Check if the item already exists in the cart for this user and product
     const existing = await this.prisma.cartItem.findFirst({
       where: {
         cart_id: cart.id,
@@ -104,7 +101,6 @@ export class CartService {
       throw new BadRequestException('Product already exists in the cart');
     }
 
-    // Create a new cart item row
     await this.prisma.cartItem.create({
       data: {
         cart_id: cart.id,
@@ -136,7 +132,6 @@ export class CartService {
       throw new NotFoundException('Cart item not found');
     }
 
-    // Verify stock before updating
     const product = await this.fetchProductDetails(productId);
     if (!product) {
       throw new NotFoundException('Product not found');
